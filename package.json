@@ -129,7 +129,7 @@
     "katex": "^0.16.25",
     "langfuse": "^3.37.0",
     "langfuse-vercel": "^3.37.0",
-    "lexical": "^0.32.1",
+    "lexical": "^0.38.2",
     "lucide-react": "^0.552.0",
     "marked": "^15.0.12",
     "marked-react": "^3.0.0",
