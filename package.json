@@ -45,7 +45,7 @@
     "@e2b/code-interpreter": "^1.0.4",
     "@hookform/resolvers": "^5.2.1",
     "@lexical/code": "^0.32.1",
-    "@lexical/html": "^0.32.1",
+    "@lexical/html": "^0.38.2",
     "@lexical/link": "^0.32.1",
     "@lexical/list": "^0.32.1",
     "@lexical/markdown": "^0.32.1",
