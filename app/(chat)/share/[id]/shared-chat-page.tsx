@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { ChatSystem } from "@/components/chat-system";
+import { ErrorPage } from "@/components/error-page";
 import { WithSkeleton } from "@/components/with-skeleton";
 import { usePublicChat, usePublicChatMessages } from "@/hooks/use-shared-chat";
 import { getDefaultThread } from "@/lib/thread-utils";
@@ -32,13 +33,11 @@ export function SharedChatPage({ id }: { id: string }) {
   }
 
   if (chatError || messagesError) {
-    // TODO: Replace for error page
     return (
-      <div className="flex h-dvh items-center justify-center">
-        <div className="text-muted-foreground">
-          This chat is not available or has been set to private
-        </div>
-      </div>
+      <ErrorPage
+        title="Chat Not Available"
+        description="This chat is not available or has been set to private."
+      />
     );
   }
 
