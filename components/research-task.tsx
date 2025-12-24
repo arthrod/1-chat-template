@@ -50,8 +50,9 @@ export const ResearchTask = ({
                   variant="outline"
                 >
                   <SearchIcon className="size-3.5" />
-                  {/* // TODO: Make this size width responsive or accomodate long text in another manner */}
-                  <span className="max-w-[300px] truncate">{query}</span>
+                  <span className="max-w-[150px] truncate sm:max-w-[300px]">
+                    {query}
+                  </span>
                 </Badge>
               ))}
             </div>
