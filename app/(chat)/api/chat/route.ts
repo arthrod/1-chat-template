@@ -25,7 +25,7 @@ import { ChatSDKError } from "@/lib/ai/errors";
 import { markdownJoinerTransform } from "@/lib/ai/markdown-joiner-transform";
 import { systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel, getModelProviderOptions } from "@/lib/ai/providers";
-import { calculateMessagesTokens } from "@/lib/ai/token-utils";
+import { calculateMessagesTokens, truncateMessages } from "@/lib/ai/token-utils";
 import { getTools } from "@/lib/ai/tools/tools";
 import { allTools, toolsDefinitions } from "@/lib/ai/tools/tools-definitions";
 import type { ChatMessage, StreamWriter, ToolName } from "@/lib/ai/types";
@@ -427,7 +427,8 @@ export async function POST(request: NextRequest) {
           userMessage.metadata.parentMessageId
         );
 
-    const messages = [...messageThreadToParent, userMessage].slice(-5);
+    // Use full message history for context truncation instead of arbitrary slice
+    const messages = [...messageThreadToParent, userMessage];
 
     // Process conversation history
     const lastGeneratedImage = getRecentGeneratedImage(messages);
@@ -438,10 +439,38 @@ export async function POST(request: NextRequest) {
     );
 
     // Filter out reasoning parts to ensure compatibility between different models
-    const messagesWithoutReasoning = filterReasoningParts(messages.slice(-5));
+    const messagesWithoutReasoning = filterReasoningParts(messages);
 
-    // TODO: Do something smarter by truncating the context to a numer of tokens (maybe even based on setting)
-    const modelMessages = convertToModelMessages(messagesWithoutReasoning);
+    // Calculate available input tokens
+    // context_window is the total size. We need to leave space for output.
+    // Use model's max_tokens if available as output reservation, otherwise default to 4k
+    const maxOutputTokens = modelDefinition.max_tokens || 4096;
+    // Leave a safety margin
+    const safetyMargin = 1000;
+    const maxInputTokens = Math.max(
+      2000,
+      (modelDefinition.context_window || 128000) -
+        maxOutputTokens -
+        safetyMargin
+    );
+
+    log.debug(
+      {
+        maxInputTokens,
+        contextWindow: modelDefinition.context_window,
+        maxOutputTokens,
+      },
+      "Truncating context"
+    );
+
+    const modelMessagesCandidates = convertToModelMessages(
+      messagesWithoutReasoning
+    );
+
+    const modelMessages = truncateMessages(
+      modelMessagesCandidates,
+      maxInputTokens
+    );
 
     // TODO: remove this when the gateway provider supports URLs
     const contextForLLM =
