@@ -27,7 +27,7 @@ export const ResearchProgress = ({
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
-  const lastUpdate = updates.length > 0 ? updates.at(-1) : null;
+  const lastUpdate = updates.length > 0 ? updates[updates.length - 1] : undefined;
 
   const searchCount = React.useMemo(
     () => updates.filter((u) => u.type === "web").length,
@@ -42,7 +42,6 @@ export const ResearchProgress = ({
     [updates]
   );
 
-  // TODO: First update is not showing
   const lastUpdateTitle = lastUpdate
     ? isComplete
       ? "Research Complete"
