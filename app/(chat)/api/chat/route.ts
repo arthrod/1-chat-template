@@ -596,11 +596,7 @@ export async function POST(request: NextRequest) {
           });
         },
         generateId: () => messageId,
-        onFinish: async ({
-          messages,
-          isContinuation: _isContinuation,
-          responseMessage,
-        }) => {
+        onFinish: async ({ messages, isContinuation: _isContinuation }) => {
           // Clear timeout since we finished successfully
           clearTimeout(timeoutId);
 
@@ -625,9 +621,8 @@ export async function POST(request: NextRequest) {
 
                   return acc + toolDef.cost;
                 }, 0);
-            const _assistantMessage = responseMessage; // TODO: Fix this in ai sdk v5 - responseMessage is not a UIMessage
+
             try {
-              // TODO: Validate if this is correct ai sdk v5
               const assistantMessage = messages.at(-1);
 
               if (!assistantMessage) {
