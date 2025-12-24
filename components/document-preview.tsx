@@ -82,7 +82,7 @@ export function DocumentPreview({
     if (args) {
       return (
         <DocumentToolCall
-          args={{ title: args.title }}
+          args={args}
           isReadonly={isReadonly}
           type={type}
         />

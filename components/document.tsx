@@ -84,11 +84,22 @@ function PureDocumentToolResult({
 
 export const DocumentToolResult = memo(PureDocumentToolResult, () => true);
 
-type DocumentToolCallProps = {
-  type: "create" | "update" | "request-suggestions";
-  args: { title?: string };
-  isReadonly: boolean;
-};
+type DocumentToolCallProps =
+  | {
+      type: "create";
+      args: { title: string };
+      isReadonly: boolean;
+    }
+  | {
+      type: "update";
+      args: { description: string; id: string };
+      isReadonly: boolean;
+    }
+  | {
+      type: "request-suggestions";
+      args: { documentId: string };
+      isReadonly: boolean;
+    };
 
 function PureDocumentToolCall({
   type,
@@ -96,6 +107,8 @@ function PureDocumentToolCall({
   isReadonly: _isReadonly,
 }: DocumentToolCallProps) {
   const { setArtifact } = useArtifact();
+
+  const title = type === "create" ? args.title : undefined;
 
   return (
     <button
@@ -130,7 +143,7 @@ function PureDocumentToolCall({
         </div>
 
         <div className="text-left">
-          {`${getActionText(type, "present")} ${args.title ? `"${args.title}"` : ""}`}
+          {`${getActionText(type, "present")} ${title ? `"${title}"` : ""}`}
         </div>
       </div>
 
